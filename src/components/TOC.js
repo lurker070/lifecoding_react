@@ -7,9 +7,17 @@ class TOC extends React.Component {
         return (
             <nav>
                 {data.map(data => (
-                    <li key={data.id}><a href={"/content/"+data.id}>{data.title}</a></li>
+                    <li key={data.id}>
+                        <a href={"/content/"+data.id} 
+                        data-id = {data.id}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            this.props.onChangePage(event.target.dataset.id);
+                        }}>{data.title}
+                        </a>
+                    </li>
                 ))}
-            </nav>
+            </nav> 
         );
     }
   }
