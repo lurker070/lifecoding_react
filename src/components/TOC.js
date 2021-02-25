@@ -1,9 +1,14 @@
 import React from "react"
 
 class TOC extends React.Component {
+    shouldComponentUpdate(newProps, newState){
+        if (this.props.data === newProps.data){
+            return false;
+        }
+        return true;
+    }
     render() {
         const data = this.props.data;
-        console.log(data);
         return (
             <nav>
                 {data.map(data => (
