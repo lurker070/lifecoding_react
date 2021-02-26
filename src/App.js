@@ -2,6 +2,7 @@ import React from "react";
 import './App.css';
 import ReadContent from "./components/ReadContent";
 import CreateContent from  "./components/CreateContent";
+import UpdateContent from "./components/UpdateContent";
 import Subject from "./components/Subject";
 import TOC from "./components/TOC";
 import Control from "./components/Control";
@@ -26,7 +27,7 @@ class App extends React.Component  {
       {id:3, title:"Javascipt", desc:"Javascipt is for interactive"}
     ]
   }
-  render() {
+  getContent() {
     var _title, _desc, _article = null;
     if (this.state.mode === 'welcome') {
       _title = this.state.welcome.title;
@@ -43,10 +44,27 @@ class App extends React.Component  {
         {id:this.max_content_id, title:_title, desc:_desc}
       );
       this.setState({
-        contents:_contents
+        contents:_contents,
+        mode:"read",
+        selected_content_id:this.max_content_id
       })
       }}></CreateContent>
+    } else if (this.state.mode === 'update') {
+      _article = <UpdateContent data={this.state.contents[this.state.selected_content_id - 1]}
+        onSubmit={(_id,_title,_desc) => {
+          const _contents = Array.from(this.state.contents);
+          _contents[_id-1] = {id:_id, title:_title, desc:_desc}
+          this.setState({
+            contents:_contents,
+            mode:"read"
+          })
+          }
+        }>
+      </UpdateContent>
     }
+    return _article;
+  }
+  render() {
     return (
       <div className="App">
         <header className="App-header">
@@ -66,11 +84,23 @@ class App extends React.Component  {
             }} data={this.state.contents}>
           </TOC>
           <Control onChangeMode={(mode) => {
-            this.setState({
-              mode
-            })
+            if(mode === "delete") {
+              if(window.confirm("Really?")){
+                const _contents = Array.from(this.state.contents);
+                _contents.splice(this.state.selected_content_id-1 , 1);
+                this.setState({
+                  mode:"welcome",
+                  contents:_contents
+                })
+                alert("Deleted!");
+              }
+            } else {
+              this.setState({
+                mode
+              })
+            }
           }}></Control>
-          {_article}
+          {this.getContent()}
         </header>
       </div>
     );
